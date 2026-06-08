@@ -125,56 +125,92 @@
         }
 
         body.light-mode {
-            background-color: #f1f5f9 !important;
+            background-color: #f8fbff !important;
             color: #0f172a !important;
+            --tw-bg-opacity: 1;
         }
 
-        body.light-mode .bg-\[\#0b0f19\] {
+        body.light-mode .bg-\[\#0b0f19\],
+        body.light-mode .bg-\[\#090d16\],
+        body.light-mode .bg-slate-900,
+        body.light-mode .bg-slate-950,
+        body.light-mode .bg-slate-900\/10,
+        body.light-mode .bg-slate-900\/20,
+        body.light-mode .bg-slate-900\/30,
+        body.light-mode .bg-slate-900\/40,
+        body.light-mode .bg-slate-900\/50,
+        body.light-mode .bg-slate-900\/60,
+        body.light-mode .bg-slate-900\/70,
+        body.light-mode .bg-slate-950\/20,
+        body.light-mode .bg-slate-950\/30,
+        body.light-mode .bg-slate-950\/40,
+        body.light-mode .bg-slate-950\/50,
+        body.light-mode .bg-slate-950\/60,
+        body.light-mode .bg-slate-950\/80 {
             background-color: #ffffff !important;
+            border-color: #e2e8f0 !important;
+            color: #0f172a !important;
             box-shadow: var(--shadow-premium);
         }
 
-        body.light-mode .bg-\[\#090d16\] {
-            background-color: #f8fafc !important;
-        }
-
         body.light-mode .bg-slate-900\/40 {
-            background-color: #f1f5f9 !important;
-            border-color: #cbd5e1 !important;
+            background-color: #f8fbff !important;
+            border-color: #e2e8f0 !important;
         }
 
         body.light-mode .bg-slate-900\/60 {
-            background-color: #f1f5f9 !important;
-            border-color: #cbd5e1 !important;
+            background-color: #f8fbff !important;
+            border-color: #e2e8f0 !important;
         }
 
         body.light-mode .bg-slate-900 {
             background-color: #ffffff !important;
-            border-color: #cbd5e1 !important;
-            color: #1e293b !important;
+            border-color: #e2e8f0 !important;
+            color: #0f172a !important;
+        }
+
+        body.light-mode .bg-slate-900\/10,
+        body.light-mode .bg-slate-900\/20,
+        body.light-mode .bg-slate-900\/30,
+        body.light-mode .bg-slate-900\/40,
+        body.light-mode .bg-slate-900\/50,
+        body.light-mode .bg-slate-900\/60,
+        body.light-mode .bg-slate-900\/70 {
+            background-color: rgba(248, 250, 252, 0.96) !important;
+            border-color: #e2e8f0 !important;
         }
 
         body.light-mode .bg-slate-950 {
-            background-color: #f8fafc !important;
-            border-color: #cbd5e1 !important;
+            background-color: #ffffff !important;
+            border-color: #e2e8f0 !important;
             color: #1e293b !important;
         }
 
+        body.light-mode .bg-slate-950\/20,
+        body.light-mode .bg-slate-950\/30,
+        body.light-mode .bg-slate-950\/40,
+        body.light-mode .bg-slate-950\/50,
+        body.light-mode .bg-slate-950\/60,
+        body.light-mode .bg-slate-950\/80 {
+            background-color: rgba(255, 255, 255, 0.96) !important;
+            border-color: #e2e8f0 !important;
+        }
+
         body.light-mode .bg-slate-950\/40 {
-            background-color: rgba(241, 245, 249, 0.8) !important;
+            background-color: #f8fbff !important;
         }
 
         body.light-mode .bg-slate-950\/50 {
-            background-color: #f8fafc !important;
+            background-color: #f8fbff !important;
         }
 
         body.light-mode .bg-slate-950\/60 {
-            background-color: rgba(241, 245, 249, 0.8) !important;
+            background-color: #f8fbff !important;
         }
 
         body.light-mode .bg-slate-950\/80 {
             background-color: #ffffff !important;
-            border-color: #cbd5e1 !important;
+            border-color: #e2e8f0 !important;
         }
 
         body.light-mode .bg-\[\#0b0f19\] {
@@ -185,30 +221,19 @@
             background-color: #f8fafc !important;
         }
 
-        body.light-mode .text-slate-200 {
+        body.light-mode .text-slate-200,
+        body.light-mode .text-slate-300,
+        body.light-mode .text-slate-400,
+        body.light-mode .text-slate-500,
+        body.light-mode .text-slate-100,
+        body.light-mode .text-white,
+        body.light-mode .text-slate-600 {
             color: #0f172a !important;
         }
 
-        body.light-mode .text-slate-300 {
-            color: #1e293b !important;
-        }
-
-        body.light-mode .text-slate-400 {
-            color: #475569 !important;
-            font-weight: 500;
-        }
-
+        body.light-mode .text-slate-400,
         body.light-mode .text-slate-500 {
-            color: #64748b !important;
             font-weight: 600;
-        }
-
-        body.light-mode .text-white {
-            color: #0f172a !important;
-        }
-
-        body.light-mode .text-slate-100 {
-            color: #0f172a !important;
         }
 
         body.light-mode .border-slate-800 {
@@ -243,13 +268,9 @@
             border-color: #cbd5e1 !important;
         }
 
-        body.light-mode select {
-            background-color: #ffffff !important;
-            border-color: #cbd5e1 !important;
-            color: #0f172a !important;
-        }
-
-        body.light-mode input {
+        body.light-mode select,
+        body.light-mode input,
+        body.light-mode textarea {
             background-color: #ffffff !important;
             border-color: #cbd5e1 !important;
             color: #0f172a !important;
@@ -274,8 +295,9 @@
         }
 
         body.light-mode .glass-panel {
-            background: rgba(255, 255, 255, 0.8) !important;
-            border-color: #cbd5e1 !important;
+            background: rgba(255, 255, 255, 0.94) !important;
+            border-color: #e2e8f0 !important;
+            box-shadow: 0 18px 40px -24px rgba(15, 23, 42, 0.25);
         }
 
         body.light-mode #loginScreen {
@@ -320,8 +342,8 @@
 
         body.light-mode button.bg-slate-900 {
             background-color: #ffffff !important;
-            color: #475569 !important;
-            border-color: #cbd5e1 !important;
+            color: #334155 !important;
+            border-color: #e2e8f0 !important;
         }
 
         body.light-mode button.bg-slate-900:hover {
@@ -375,6 +397,121 @@
 
         body.light-mode .text-purple-500 {
             color: #6d28d9 !important;
+        }
+
+        /* Paleta clara más legible para tarjetas, texto y botones */
+        body.light-mode [class*="bg-slate-900"],
+        body.light-mode [class*="bg-slate-950"],
+        body.light-mode [class*="bg-[#0b0f19]"],
+        body.light-mode [class*="bg-[#090d16]"] {
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+            border-color: #e2e8f0 !important;
+            box-shadow: 0 18px 40px -24px rgba(15, 23, 42, 0.28);
+        }
+
+        body.light-mode [class*="border-slate-800"],
+        body.light-mode [class*="border-slate-700"] {
+            border-color: #dbe4ef !important;
+        }
+
+        body.light-mode [class*="text-slate-200"],
+        body.light-mode [class*="text-slate-300"],
+        body.light-mode [class*="text-slate-400"],
+        body.light-mode [class*="text-slate-500"],
+        body.light-mode [class*="text-slate-600"],
+        body.light-mode [class*="text-white"],
+        body.light-mode [class*="text-slate-100"] {
+            color: #0f172a !important;
+        }
+
+        body.light-mode button:not(.bg-blue-600):not(.bg-emerald-600):not(.bg-rose-600):not(.bg-amber-600) {
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+            border-color: #dbe4ef !important;
+        }
+
+        body.light-mode button:not(.bg-blue-600):not(.bg-emerald-600):not(.bg-rose-600):not(.bg-amber-600):hover {
+            background-color: #eff6ff !important;
+            color: #0f172a !important;
+        }
+
+        body.light-mode .bg-slate-800,
+        body.light-mode .bg-slate-700,
+        body.light-mode .bg-slate-600,
+        body.light-mode .bg-slate-500,
+        body.light-mode .bg-slate-400 {
+            background-color: #ffffff !important;
+            border-color: #dbe4ef !important;
+            color: #0f172a !important;
+        }
+
+        body.light-mode .hover\:bg-slate-800:hover,
+        body.light-mode .hover\:bg-slate-900:hover,
+        body.light-mode .hover\:bg-slate-950:hover {
+            background-color: #eff6ff !important;
+        }
+
+        body.light-mode button[class*="bg-slate-900"],
+        body.light-mode button[class*="bg-slate-950"],
+        body.light-mode button[class*="bg-slate-800"] {
+            background-color: #ffffff !important;
+            color: #334155 !important;
+            border-color: #dbe4ef !important;
+        }
+
+        body.light-mode button[class*="bg-slate-900"]:hover,
+        body.light-mode button[class*="bg-slate-950"]:hover,
+        body.light-mode button[class*="bg-slate-800"]:hover {
+            background-color: #eff6ff !important;
+            color: #0f172a !important;
+        }
+
+        body.light-mode #notifDropdown,
+        body.light-mode #chatRailPanel,
+        body.light-mode .sidebar-fixed-card,
+        body.light-mode .sidebar-fixed-card button,
+        body.light-mode .glass-panel,
+        body.light-mode #fichaClienteModal > div,
+        body.light-mode #excelStructureModal > div,
+        body.light-mode #modalEjecutivoWrapper > div,
+        body.light-mode #rechazoAsistenteWrapper {
+            background-color: #ffffff !important;
+            border-color: #dbe4ef !important;
+            color: #0f172a !important;
+            box-shadow: 0 18px 40px -24px rgba(15, 23, 42, 0.25);
+        }
+
+        body.light-mode .sidebar-fixed-card {
+            background: rgba(255, 255, 255, 0.98) !important;
+            border-color: #dbe4ef !important;
+            color: #0f172a !important;
+            box-shadow: 0 18px 40px -24px rgba(15, 23, 42, 0.25);
+        }
+
+        body.light-mode .sidebar-fixed-card button {
+            background-color: #ffffff !important;
+            color: #334155 !important;
+            border-color: #dbe4ef !important;
+        }
+
+        body.light-mode #sidebarFixedToggleBtn,
+        body.light-mode #themeToggleBtn,
+        body.light-mode #chatRailToggleBtn,
+        body.light-mode #showSidebarBtn,
+        body.light-mode #leftSidebar button {
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+            border-color: #dbe4ef !important;
+        }
+
+        body.light-mode #sidebarFixedToggleBtn:hover,
+        body.light-mode #themeToggleBtn:hover,
+        body.light-mode #chatRailToggleBtn:hover,
+        body.light-mode #showSidebarBtn:hover,
+        body.light-mode #leftSidebar button:hover {
+            background-color: #eff6ff !important;
+            color: #0f172a !important;
         }
     </style>
 </head>
@@ -1904,14 +2041,19 @@
             if (!container) return;
             container.innerHTML = "";
 
+            const isLight = document.body.classList.contains('light-mode');
             const items = menuConfig[activeProfile];
             if (!items) return;
 
             items.forEach(item => {
                 const isActive = item.id === currentTab;
                 const activeClasses = isActive
-                    ? "bg-blue-600/10 border-l-2 border-blue-500 text-blue-400"
-                    : "text-slate-400 hover:bg-slate-900/50 hover:text-slate-200";
+                    ? (isLight
+                        ? "bg-blue-100 border-l-2 border-blue-600 text-blue-700"
+                        : "bg-blue-600/10 border-l-2 border-blue-500 text-blue-400")
+                    : (isLight
+                        ? "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
+                        : "text-slate-400 hover:bg-slate-900/50 hover:text-slate-200");
 
                 const button = document.createElement("button");
                 button.className = `w-full text-left px-3 py-2.5 rounded-lg text-xs font-semibold flex items-center justify-between transition-all ${activeClasses}`;
@@ -1926,7 +2068,9 @@
                 if (item.badge) {
                     const badgeSpan = document.createElement("span");
                     badgeSpan.id = item.badge;
-                    badgeSpan.className = "bg-slate-800 text-slate-400 text-[10px] font-mono px-1.5 py-0.5 rounded-full font-bold";
+                    badgeSpan.className = isLight
+                        ? "bg-slate-100 text-slate-700 text-[10px] font-mono px-1.5 py-0.5 rounded-full font-bold"
+                        : "bg-slate-800 text-slate-400 text-[10px] font-mono px-1.5 py-0.5 rounded-full font-bold";
                     badgeSpan.innerText = "0";
                     button.appendChild(badgeSpan);
                 }
@@ -2046,6 +2190,7 @@
         function renderChatRail() {
             const panel = document.getElementById('chatRailPanel');
             if (!panel) return;
+            const isLight = document.body.classList.contains('light-mode');
             const railChats = (chatsLocales || []).filter(chat => chat && chat.id && !hiddenRailChatIds.includes(String(chat.id)) && chat.estado !== 'eliminado');
             const grupos = Object.values(railChats.reduce((acc, chat) => {
                 const key = String(chat.ejecutivoId || chat.ejecutivoNombre || 'Sin ejecutivo');
@@ -2055,35 +2200,35 @@
             }, {})).sort((a, b) => a.nombre.localeCompare(b.nombre, 'es', { sensitivity: 'base' }));
 
             panel.innerHTML = `
-                <div class="flex items-center justify-between border-b border-slate-800 px-4 py-3 bg-slate-950/70">
+                <div class="flex items-center justify-between border-b ${isLight ? 'border-slate-200 bg-white' : 'border-slate-800 bg-slate-950/70'} px-4 py-3">
                     <div>
-                        <p class="text-[10px] uppercase tracking-[0.35em] text-blue-400 font-bold">Chats abiertos</p>
-                        <p class="text-[11px] text-slate-400">Agrupados por ejecutivo</p>
+                        <p class="text-[10px] uppercase tracking-[0.35em] ${isLight ? 'text-blue-700' : 'text-blue-400'} font-bold">Chats abiertos</p>
+                        <p class="text-[11px] ${isLight ? 'text-slate-600' : 'text-slate-400'}">Agrupados por ejecutivo</p>
                     </div>
-                    <button onclick="toggleChatRail()" class="text-slate-400 hover:text-white text-[11px]">Ocultar</button>
+                    <button onclick="toggleChatRail()" class="${isLight ? 'text-slate-600 hover:text-slate-900' : 'text-slate-400 hover:text-white'} text-[11px]">Ocultar</button>
                 </div>
                 <div class="max-h-[66vh] overflow-y-auto custom-scrollbar p-3 space-y-3">
                     ${grupos.length ? grupos.map(group => `
-                        <article class="rounded-2xl border border-slate-800 bg-slate-950/70 p-3">
+                        <article class="rounded-2xl border ${isLight ? 'border-slate-200 bg-white shadow-sm' : 'border-slate-800 bg-slate-950/70'} p-3">
                             <div class="flex items-center justify-between gap-2 mb-2">
-                                <strong class="text-[11px] text-white">${group.nombre}</strong>
-                                <span class="text-[9px] text-blue-300">${group.items.length} hilo(s)</span>
+                                <strong class="text-[11px] ${isLight ? 'text-slate-900' : 'text-white'}">${group.nombre}</strong>
+                                <span class="text-[9px] ${isLight ? 'text-blue-700' : 'text-blue-300'}">${group.items.length} hilo(s)</span>
                             </div>
                             <div class="space-y-2">${group.items.map(chat => `
-                                <article class="rounded-xl border border-slate-800 bg-slate-900/80 p-2.5">
+                                <article class="rounded-xl border ${isLight ? 'border-slate-200 bg-slate-50' : 'border-slate-800 bg-slate-900/80'} p-2.5 shadow-sm">
                                     <div class="flex items-start justify-between gap-2">
-                                        <button onclick="abrirVentanaChat('${chat.clienteRif || ''}', '${chat.ejecutivoId || ''}');" class="flex-1 text-left hover:border-blue-500/40 transition-all">
-                                            <p class="text-[10px] font-bold text-white">${chat.clienteNombre || 'Cliente'}</p>
-                                            <p class="text-[10px] text-slate-400 line-clamp-2">${chat.motivo || 'Sin motivo'}</p>
-                                            <p class="text-[9px] text-slate-500 mt-1">${chat.msg || 'Sin mensaje inicial.'}</p>
-                                            <p class="text-[9px] ${chat.estado === 'cerrado' ? 'text-amber-300' : 'text-emerald-300'} mt-1">${chat.estado === 'cerrado' ? 'Archivado' : 'Abierto'}</p>
+                                        <button onclick="abrirVentanaChat('${chat.clienteRif || ''}', '${chat.ejecutivoId || ''}');" class="flex-1 text-left rounded-xl border ${isLight ? 'border-transparent hover:border-blue-200 hover:bg-blue-50' : 'hover:border-blue-500/40'} transition-all">
+                                            <p class="text-[10px] font-bold ${isLight ? 'text-slate-900' : 'text-white'}">${chat.clienteNombre || 'Cliente'}</p>
+                                            <p class="text-[10px] ${isLight ? 'text-slate-600' : 'text-slate-400'} line-clamp-2">${chat.motivo || 'Sin motivo'}</p>
+                                            <p class="text-[9px] ${isLight ? 'text-slate-500' : 'text-slate-500'} mt-1">${chat.msg || 'Sin mensaje inicial.'}</p>
+                                            <p class="text-[9px] ${chat.estado === 'cerrado' ? (isLight ? 'text-amber-700' : 'text-amber-300') : (isLight ? 'text-emerald-700' : 'text-emerald-300')} mt-1">${chat.estado === 'cerrado' ? 'Archivado' : 'Abierto'}</p>
                                         </button>
-                                        <button onclick="event.stopPropagation(); removeChatFromRail('${chat.id}');" class="text-slate-400 hover:text-rose-300 text-[10px] leading-none px-1 py-0.5 border border-slate-800 rounded-md" title="Eliminar del panel derecho">×</button>
+                                        <button onclick="event.stopPropagation(); removeChatFromRail('${chat.id}');" class="${isLight ? 'text-slate-600 hover:text-rose-600 border-slate-200' : 'text-slate-400 hover:text-rose-300 border-slate-800'} text-[10px] leading-none px-1 py-0.5 border rounded-md" title="Eliminar del panel derecho">×</button>
                                     </div>
                                 </article>
                             `).join('')}</div>
                         </article>
-                    `).join('') : '<div class="rounded-xl border border-dashed border-slate-800 p-6 text-center text-[11px] text-slate-500">No hay chats abiertos para mostrar.</div>'}
+                    `).join('') : `<div class="rounded-xl border border-dashed ${isLight ? 'border-slate-200 text-slate-500' : 'border-slate-800 text-slate-500'} p-6 text-center text-[11px]">No hay chats abiertos para mostrar.</div>`}
                 </div>
             `;
         }
@@ -4981,6 +5126,7 @@
         function renderChatWindows() {
             const container = document.getElementById('chatFloatingWindows');
             if (!container) return;
+            const isLight = document.body.classList.contains('light-mode');
 
             container.innerHTML = (chatWindows || []).map(threadId => {
                 const [rif, execId] = String(threadId).split('_');
@@ -4993,39 +5139,39 @@
 
                 if (minimized) {
                     return `
-                        <button type="button" onclick="minimizarVentanaChat('${threadId}')" class="w-56 rounded-2xl border border-slate-700 bg-slate-950/95 px-3 py-2 text-left text-[10px] text-slate-100 shadow-2xl hover:border-blue-500/40">
-                            <span class="block text-[10px] font-bold text-white">${headerTitle}</span>
-                            <span class="text-[9px] text-slate-400">Chat minimizado · clic para restaurar</span>
+                        <button type="button" onclick="minimizarVentanaChat('${threadId}')" class="w-56 rounded-2xl border ${isLight ? 'border-slate-200 bg-white text-slate-800 hover:border-blue-300' : 'border-slate-700 bg-slate-950/95 text-slate-100 hover:border-blue-500/40'} px-3 py-2 text-left text-[10px] shadow-2xl">
+                            <span class="block text-[10px] font-bold ${isLight ? 'text-slate-900' : 'text-white'}">${headerTitle}</span>
+                            <span class="text-[9px] ${isLight ? 'text-slate-500' : 'text-slate-400'}">Chat minimizado · clic para restaurar</span>
                         </button>
                     `;
                 }
 
                 return `
-                    <div class="w-80 bg-[#0b0f19] border border-slate-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col font-sans pointer-events-auto">
-                        <div class="bg-blue-600 px-4 py-2.5 flex justify-between items-center text-white">
+                    <div class="w-80 ${isLight ? 'bg-white border-slate-200 shadow-[0_18px_40px_-24px_rgba(15,23,42,0.28)]' : 'bg-[#0b0f19] border-slate-800 shadow-2xl'} border rounded-2xl overflow-hidden flex flex-col font-sans pointer-events-auto">
+                        <div class="bg-gradient-to-r from-blue-600 to-indigo-500 px-4 py-2.5 flex justify-between items-center text-white">
                             <div class="truncate pr-2">
                                 <p class="text-[11px] font-bold truncate">${headerTitle}</p>
-                                <p class="text-[9px] opacity-80">Motivo: ${lastMsg.motivo || 'Sin motivo'}</p>
+                                <p class="text-[9px] opacity-85">Motivo: ${lastMsg.motivo || 'Sin motivo'}</p>
                             </div>
                             <div class="flex items-center gap-1">
-                                <button onclick="cerrarChatDeHilo('${rif}', '${execId}')" class="hover:bg-blue-500 p-1 rounded-lg text-[10px] font-bold" title="Archivar hilo">ARCHIVAR</button>
-                                <button onclick="minimizarVentanaChat('${threadId}')" class="hover:bg-blue-500 p-1 rounded-lg text-[10px] font-bold" title="Minimizar ventana">MINIMIZAR</button>
+                                <button onclick="cerrarChatDeHilo('${rif}', '${execId}')" class="hover:bg-blue-500/80 p-1 rounded-lg text-[10px] font-bold" title="Archivar hilo">ARCHIVAR</button>
+                                <button onclick="minimizarVentanaChat('${threadId}')" class="hover:bg-blue-500/80 p-1 rounded-lg text-[10px] font-bold" title="Minimizar ventana">MINIMIZAR</button>
                             </div>
                         </div>
-                        <div class="p-3 max-h-44 overflow-y-auto custom-scrollbar text-[10px] text-slate-200">${lastMsg.msg || 'Sin mensajes aún.'}</div>
-                        <div class="p-4 bg-slate-950/90 h-64 overflow-y-auto custom-scrollbar space-y-3 flex flex-col">
+                        <div class="p-3 max-h-44 overflow-y-auto custom-scrollbar text-[10px] ${isLight ? 'text-slate-700 bg-slate-50' : 'text-slate-200 bg-slate-950/60'}">${lastMsg.msg || 'Sin mensajes aún.'}</div>
+                        <div class="p-4 ${isLight ? 'bg-white' : 'bg-slate-950/90'} h-64 overflow-y-auto custom-scrollbar space-y-3 flex flex-col">
                             ${threadMsgs.map(m => `
                                 <div class="flex flex-col ${m.remitente === activeProfile ? 'items-end' : 'items-start'}">
-                                    <div class="px-3 py-2 rounded-2xl text-[11px] max-w-[90%] ${m.remitente === activeProfile ? 'bg-blue-600 text-white rounded-tr-none' : 'bg-slate-800 text-slate-200 rounded-tl-none'}">
+                                    <div class="px-3 py-2 rounded-2xl text-[11px] max-w-[90%] ${m.remitente === activeProfile ? 'bg-blue-600 text-white rounded-tr-none' : isLight ? 'bg-slate-100 text-slate-800 border border-slate-200 rounded-tl-none' : 'bg-slate-800 text-slate-200 rounded-tl-none'}">
                                         ${m.msg}
                                     </div>
-                                    <p class="text-[9px] text-slate-500 mt-1 font-mono">${m.hora || ''}</p>
+                                    <p class="text-[9px] ${isLight ? 'text-slate-500' : 'text-slate-500'} mt-1 font-mono">${m.hora || ''}</p>
                                 </div>
                             `).join('')}
                         </div>
-                        <div class="p-2 border-t border-slate-800 bg-slate-900 flex gap-2">
-                            <input type="text" id="reply_input_${threadId}" onkeypress="if(event.key==='Enter') enviarRespuestaThread('${rif}', '${execId}', '${(lastMsg.motivo || '').replace(/'/g, "\\'")}' )" placeholder="Escriba un mensaje..." class="flex-1 bg-slate-950 border border-slate-800 rounded-lg px-2 py-1.5 text-[11px] text-white focus:outline-none focus:border-blue-500">
-                            <button onclick="enviarRespuestaThread('${rif}', '${execId}', '${(lastMsg.motivo || '').replace(/'/g, "\\'")}')" class="bg-blue-600 text-white p-1.5 rounded-lg">
+                        <div class="p-2 border-t ${isLight ? 'border-slate-200 bg-slate-50' : 'border-slate-800 bg-slate-900'} flex gap-2">
+                            <input type="text" id="reply_input_${threadId}" onkeypress="if(event.key==='Enter') enviarRespuestaThread('${rif}', '${execId}', '${(lastMsg.motivo || '').replace(/'/g, "\\'")}' )" placeholder="Escriba un mensaje..." class="flex-1 rounded-lg px-2 py-1.5 text-[11px] ${isLight ? 'bg-white border border-slate-200 text-slate-900 placeholder:text-slate-400 focus:border-blue-500 shadow-sm' : 'bg-slate-950 border border-slate-800 text-white focus:border-blue-500'} focus:outline-none">
+                            <button onclick="enviarRespuestaThread('${rif}', '${execId}', '${(lastMsg.motivo || '').replace(/'/g, "\\'")}')" class="bg-blue-600 hover:bg-blue-500 text-white p-1.5 rounded-lg shadow-sm">
                                 <i data-lucide="send" class="w-3.5 h-3.5"></i>
                             </button>
                         </div>
@@ -5192,6 +5338,13 @@
                 }
                 try { lucide.createIcons(); } catch (e) { }
             }
+
+            if (document.getElementById("sidebarMenu")) {
+                renderSidebarMenu();
+            }
+
+            if (document.getElementById('chatRailPanel')) renderChatRail();
+            if (document.getElementById('chatFloatingWindows')) renderChatWindows();
 
             // Re-renderizar las gráficas inmediatamente para actualizar los colores
             if (currentTab === "dashboard_admin") {
