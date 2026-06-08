@@ -17,14 +17,30 @@
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=300;400;500;600;700;800&family=JetBrains+Mono:wght=400;500;700&display=swap');
 
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Plus Jakarta Sans', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+            font-feature-settings: "liga" 1, "kern" 1;
             transition: background-color 0.3s ease, color 0.3s ease;
             overflow-x: hidden !important;
             /* Evita scroll lateral general en zooms altos */
         }
 
+        *, *::before, *::after {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+        }
+
+        button, input, select, textarea, .font-sans, .font-mono {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+        }
+
         .font-mono {
-            font-family: 'JetBrains Mono', monospace;
+            font-family: 'JetBrains Mono', 'Consolas', 'Courier New', monospace;
         }
 
         .custom-scrollbar::-webkit-scrollbar {
@@ -43,6 +59,94 @@
 
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
             background: #475569;
+        }
+
+        @keyframes apFadeUp {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes apPulseGlow {
+            0%, 100% { box-shadow: 0 10px 24px -14px rgba(56, 189, 248, 0.35); }
+            50% { box-shadow: 0 14px 30px -10px rgba(56, 189, 248, 0.55); }
+        }
+
+        @keyframes apFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-2px); }
+        }
+
+        @keyframes apBounceIn {
+            0% { opacity: 0; transform: scale(0.96) translateY(10px); }
+            65% { opacity: 1; transform: scale(1.02) translateY(-2px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        @keyframes apToastIn {
+            from { opacity: 0; transform: translateY(-6px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        button {
+            transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+        }
+
+        button:hover {
+            transform: translateY(-1px) scale(1.01);
+            box-shadow: 0 10px 24px -12px rgba(56, 189, 248, 0.35);
+        }
+
+        button:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        canvas,
+        .chart-card,
+        [class*="chart"],
+        .grafica-card {
+            animation: apFloat 4s ease-in-out infinite;
+        }
+
+        #loginScreen > div,
+        #loginForm button,
+        #loginScreen .bg-blue-600 {
+            animation: apBounceIn 0.35s ease;
+        }
+
+        #loginForm button,
+        #loginScreen .bg-blue-600 {
+            animation-name: apPulseGlow, apBounceIn;
+            animation-duration: 2.2s, 0.35s;
+            animation-iteration-count: infinite, 1;
+        }
+
+        #fichaClienteModal > div,
+        #excelStructureModal > div,
+        #modalEjecutivoWrapper > div,
+        #modalHilosEjecutivo > div,
+        #rechazoAsistenteWrapper > div {
+            animation: apFadeUp 0.28s ease;
+        }
+
+        #notifDropdown,
+        #toastContainer > div,
+        .toast,
+        [id*="toast"] {
+            animation: apToastIn 0.25s ease;
+        }
+
+        #chatRailPanel,
+        #chatRailToggleBtn,
+        [title="Minimizar ventana"],
+        [title="Archivar hilo"] {
+            transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+        }
+
+        #chatRailPanel:hover,
+        #chatRailToggleBtn:hover,
+        [title="Minimizar ventana"]:hover,
+        [title="Archivar hilo"]:hover {
+            transform: translateY(-1px);
         }
 
         .glass-panel {
@@ -467,6 +571,21 @@
             color: #0f172a !important;
         }
 
+        /* Legibilidad general: evitar texto demasiado pequeño */
+        body .text-\[8px\],
+        body .text-\[9px\],
+        body .text-\[10px\],
+        body .text-\[11px\],
+        body .text-xs {
+            font-size: 12px !important;
+            line-height: 1.45 !important;
+        }
+
+        body .text-\[9px\] { font-size: 10px !important; }
+        body .text-\[10px\] { font-size: 11px !important; }
+        body .text-\[11px\] { font-size: 12px !important; }
+        body .text-xs { font-size: 12px !important; }
+
         body.light-mode #notifDropdown,
         body.light-mode #chatRailPanel,
         body.light-mode .sidebar-fixed-card,
@@ -651,17 +770,6 @@
                         <span id="themeToggleText">Modo Claro</span>
                     </button>
 
-                    <div class="flex items-center gap-1 bg-slate-950 border border-slate-800/80 rounded-lg p-1">
-                        <span id="zoomLabel" class="text-[10px] text-slate-400 px-1">Zoom 100%</span>
-                        <button onclick="ajustarZoom('in')" title="Aumentar zoom del contenido" class="text-[11px] text-slate-300 hover:text-blue-300 px-2 py-1 rounded-md hover:bg-slate-800 transition-all">A+</button>
-                        <button onclick="ajustarZoom('out')" title="Restaurar zoom" class="text-[11px] text-slate-300 hover:text-blue-300 px-2 py-1 rounded-md hover:bg-slate-800 transition-all">A-</button>
-                    </div>
-
-                    <div
-                        class="hidden sm:flex items-center gap-2 text-slate-400 bg-slate-950 border border-slate-800/80 px-3 py-1.5 rounded-lg">
-                        <i data-lucide="clock" class="w-3.5 h-3.5 text-blue-400"></i>
-                        <span>SLA de Respuesta: <strong class="text-slate-200 font-mono">24h</strong></span>
-                    </div>
                     <button onclick="cerrarSesion()"
                         class="bg-slate-900 hover:bg-slate-800 border border-slate-800 text-[11px] text-slate-400 hover:text-rose-400 px-2.5 md:px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all">
                         <i data-lucide="log-out" class="w-3.5 h-3.5"></i> Salir
@@ -3266,7 +3374,7 @@
             const showRepoModeSelector = activeProfile !== 'GERENTE';
             const showDeleteColumn = activeProfile === 'ADMIN';
             container.innerHTML = `
-                <div class="bg-[#0b0f19] border border-slate-800 p-6 shadow-2xl font-sans w-full max-w-full">
+                <div class="bg-[#0b0f19] border border-slate-800 p-4 shadow-2xl font-sans w-full max-w-none mt-0">
                     <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-4 border-b border-slate-800 pb-4 mb-4 bg-[#0b0f19]">
                         <div>
                             <h3 class="text-base font-bold text-white flex items-center gap-1.5 font-sans"><i data-lucide="database" class="text-slate-400"></i> Repositorio General</h3>
@@ -3311,7 +3419,7 @@
 
                     <!-- Contenedor adaptado a resoluciones y zoom del navegador -->
                     <div class="w-full max-w-full overflow-x-auto custom-scrollbar max-h-[72vh] border border-slate-800 rounded-xl font-mono bg-[#0b0f19]">
-                        <table class="w-full text-left border-collapse min-w-[1800px] bg-[#0b0f19]">
+                        <table class="w-full text-left border-collapse min-w-[2100px] bg-[#0b0f19] table-fixed">
                             <thead>
                                 <tr class="bg-slate-900 border-b border-slate-800 text-[10px] font-bold text-slate-500 uppercase tracking-wider sticky top-0 z-10 font-sans">
                                     <th class="p-3 w-12 text-center">#</th>
@@ -3500,8 +3608,8 @@
                         ` : ''}
                         <td class="p-1"><div class="px-1.5 py-1 border border-transparent font-bold text-blue-400 font-mono truncate">${sol.rif || '-'}</div></td>
                         <td class="p-1"><div class="px-1.5 py-1 border border-transparent font-sans font-semibold text-white truncate max-w-[200px]" title="${sol.nombre_empresa || ''}">${sol.nombre_empresa || '-'}</div></td>
-                        <td class="p-1"><div class="px-1.5 py-1 border border-transparent font-bold text-slate-300 font-mono break-all" title="${sol.numero_cta || ''}">${cuentaCorta(sol.numero_cta)}</div></td>
-                        <td class="p-1"><div class="px-1.5 py-1 border border-transparent font-mono text-slate-400">${sol.telefono_empresa || '-'}</div></td>
+                        <td class="p-1 align-top"><div class="px-1.5 py-1 border border-transparent font-bold text-slate-300 font-mono whitespace-nowrap overflow-hidden text-ellipsis max-w-[180px]" title="${sol.numero_cta || ''}">${cuentaCorta(sol.numero_cta)}</div></td>
+                        <td class="p-1 align-top"><div class="px-1.5 py-1 border border-transparent font-mono text-slate-400 whitespace-nowrap overflow-hidden text-ellipsis max-w-[130px]" title="${sol.telefono_empresa || ''}">${sol.telefono_empresa || '-'}</div></td>
                         <td class="p-1 text-center font-sans">
                             <div class="px-1.5 py-1 border border-transparent">
                                 <span class="bg-blue-600/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded font-bold font-mono text-[10px]">${numSecundarios}</span>
@@ -3541,8 +3649,8 @@
                         ` : ''}
                         <td class="p-1"><input type="text" value="${sol.rif || ''}" onchange="editarCampoRegistroCaliente('${sol.id}', 'rif', this.value)" class="${inputStyle} text-blue-400 font-bold font-mono"></td>
                         <td class="p-1"><input type="text" value="${sol.nombre_empresa || ''}" onchange="editarCampoRegistroCaliente('${sol.id}', 'nombre_empresa', this.value)" class="${inputStyle} font-sans font-semibold text-white"></td>
-                        <td class="p-1"><input type="text" value="${cuentaCorta(sol.numero_cta)}" onchange="editarCampoRegistroCaliente('${sol.id}', 'numero_cta', this.value)" class="${inputStyle} font-mono font-bold" title="${sol.numero_cta || ''}"></td>
-                        <td class="p-1"><input type="text" value="${sol.telefono_empresa || ''}" onchange="editarCampoRegistroCaliente('${sol.id}', 'telefono_empresa', this.value)" class="${inputStyle} font-mono"></td>
+                        <td class="p-1 align-top"><input type="text" value="${cuentaCorta(sol.numero_cta)}" onchange="editarCampoRegistroCaliente('${sol.id}', 'numero_cta', this.value)" class="${inputStyle} font-mono font-bold whitespace-nowrap" title="${sol.numero_cta || ''}"></td>
+                        <td class="p-1 align-top"><input type="text" value="${sol.telefono_empresa || ''}" onchange="editarCampoRegistroCaliente('${sol.id}', 'telefono_empresa', this.value)" class="${inputStyle} font-mono whitespace-nowrap" title="${sol.telefono_empresa || ''}"></td>
                         <td class="p-1 text-center font-sans">
                             <span class="bg-blue-600/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded font-bold font-mono text-[10px]">${numSecundarios}</span>
                         </td>
