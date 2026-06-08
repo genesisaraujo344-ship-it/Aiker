@@ -13,6 +13,9 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- SheetJS CDN para lectura real de archivos Excel (.xlsx) -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- Supabase JS Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="./supabase-config.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=300;400;500;600;700;800&family=JetBrains+Mono:wght=400;500;700&display=swap');
 
@@ -838,13 +841,23 @@
     </div>
 
     <script>
-        const BACKEND_URL = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
-            ? "http://localhost:3000/api"
-            : "https://api-activopay.tu-servidor.com/api"; // <--- AQUÍ DEBES PONER LA URL DE TU API DESPLEGADA
+        // CONFIGURACIÓN DE SUPABASE
+        const SUPABASE_URL = (window.SUPABASE_CONFIG?.url || "https://dzxyowmwluxxjregkpys.supabase.co").replace(/\/+$/, "");
+        const SUPABASE_KEY = window.SUPABASE_CONFIG?.anonKey || "";
+        const hasPlaceholderKey = /TU_|COPIA_AQUI|REEMPLAZA|sb_secret_/.test(SUPABASE_KEY);
+        const _supabase = SUPABASE_URL && SUPABASE_KEY && !hasPlaceholderKey
+            ? supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
+            : null;
 
+        if (!_supabase) {
+            console.warn("Supabase no está listo. Pega la anon public key real en ./supabase-config.js y usa la URL del proyecto.");
+        }
+
+        const BACKEND_URL = window.SUPABASE_CONFIG?.url || "https://dzxyowmwluxxjregkpys.supabase.co";
         let activeProfile = null;
         let activeExecutiveId = null;
         let activeExecutiveName = "";
+        let autoRefreshInterval = null;
         let currentTab = null;
         let baseDatosInterna = [];
         let chatsLocales = [];
@@ -1084,29 +1097,35 @@
             return Array.from(mapaUnificado.values());
         }
 
+        // Sincronización con Supabase en lugar de API Local
         async function cargarDatosDesdeServidor() {
             const apiStatusBadge = document.getElementById("apiStatusBadge");
-            const cargaLocalResguardo = obtenerCargaPersistidaLocal();
             try {
-                const response = await fetch(`${BACKEND_URL}/admin/bandeja-global`);
-                if (response.ok) {
-                    const datosServidor = await response.json();
-                    baseDatosInterna = fusionarBasesDeDatos(datosServidor, cargaLocalResguardo);
-                    guardarEspejoLocal(baseDatosInterna);
-                    if (apiStatusBadge) {
-                        apiStatusBadge.className = "bg-[#10b981]/10 border border-[#10b981]/20 px-2 py-0.5 rounded text-[9px] text-[#10b981] font-mono font-semibold transition-colors duration-300";
-                        apiStatusBadge.innerText = "LOCAL ACTIVE";
-                    }
-                } else {
-                    baseDatosInterna = cargaLocalResguardo;
+                // Cargar Afiliaciones, Chats y Notificaciones en paralelo
+                const [resAfiliaciones, resChats, resNotif] = await Promise.all([
+                    _supabase.from('afiliaciones').select('*'),
+                    _supabase.from('chats').select('*').order('fecha', { ascending: true }),
+                    _supabase.from('notificaciones').select('*').order('fecha', { ascending: false })
+                ]);
+
+                if (resAfiliaciones.error) throw resAfiliaciones.error;
+
+                baseDatosInterna = resAfiliaciones.data;
+                chatsLocales = resChats.data || [];
+                notificaciones = resNotif.data || [];
+                guardarEspejoLocal(baseDatosInterna); 
+                
+                if (apiStatusBadge) {
+                    apiStatusBadge.className = "bg-[#10b981]/10 border border-[#10b981]/20 px-2 py-0.5 rounded text-[9px] text-[#10b981] font-mono font-semibold";
+                    apiStatusBadge.innerText = "SUPABASE CONNECTED";
                 }
             } catch (err) {
-                baseDatosInterna = cargaLocalResguardo;
+                console.error("Error conectando a Supabase:", err);
+                baseDatosInterna = obtenerCargaPersistidaLocal();
                 if (apiStatusBadge) {
-                    apiStatusBadge.className = "bg-rose-500/10 border border-rose-500/20 px-2 py-0.5 rounded text-[9px] text-rose-400 font-mono font-semibold transition-colors duration-300";
-                    apiStatusBadge.innerText = "LOCAL OFFLINE";
+                    apiStatusBadge.className = "bg-rose-500/10 text-rose-400";
+                    apiStatusBadge.innerText = "CLOUD OFFLINE";
                 }
-                spawnToast("Servidor No Disponible", "Sincronizando de forma local en el navegador.", "danger");
             }
             actualizarBadgesSoporte();
             renderContentModule();
@@ -1188,8 +1207,7 @@
         }
 
         function persistChats() {
-            chatsLocales = chatsLocales || [];
-            localStorage.setItem("activopay_chats_locales", JSON.stringify(chatsLocales));
+            // Ya no persistimos localmente de forma mandatoria, Supabase es la fuente de verdad
         }
 
         function obtenerChatsVinculadosAEjecutivo(ejecutivoId = activeExecutiveId, ejecutivoNombre = activeExecutiveName) {
@@ -1204,11 +1222,10 @@
         }
 
         function persistNotifications() {
-            notificaciones = notificaciones || [];
-            localStorage.setItem("activopay_notificaciones", JSON.stringify(notificaciones));
+            // Fuente de verdad en la nube
         }
 
-        function addNotification({ titulo, mensaje, destino, origen = 'SISTEMA', tipo = 'info', chatId = null, lectura = false }) {
+        async function addNotification({ titulo, mensaje, destino, origen = 'SISTEMA', tipo = 'info', chatId = null, lectura = false }) {
             // Evitar notificaciones a uno mismo
             const yo = activeProfile === 'ADMIN' ? 'ADMIN' : activeExecutiveName;
             if (destino === yo && origen !== 'SISTEMA') return null;
@@ -1224,8 +1241,13 @@
                 lectura,
                 fecha: new Date().toISOString()
             };
+            
+            // Guardar en Supabase
+            const { error } = await _supabase.from('notificaciones').insert([item]);
+            if (error) console.error("Error al guardar notificación:", error);
+
+            // Actualización local inmediata (el tiempo real hará el resto en otros dispositivos)
             notificaciones.unshift(item);
-            persistNotifications();
             actualizarBadgeNotificaciones();
             return item;
         }
@@ -1237,7 +1259,10 @@
             if (badge) badge.textContent = count > 0 ? String(count) : '';
         }
 
-        function marcarNotificacionesLeidas() {
+        async function marcarNotificacionesLeidas() {
+            const miDestino = activeProfile === 'ADMIN' ? 'ADMIN' : activeExecutiveName;
+            await _supabase.from('notificaciones').update({ lectura: true }).eq('destino', miDestino);
+            
             notificaciones = (notificaciones || []).map(n => ({ ...n, lectura: true }));
             persistNotifications();
             actualizarBadgeNotificaciones();
@@ -1511,7 +1536,7 @@
             });
         }
 
-        function guardarRevisionFicha() {
+        async function guardarRevisionFicha() {
             const rif = document.getElementById('ficha_header_rif')?.innerText.replace('RIF: ', '').trim();
             const sol = baseDatosInterna.find(s => String(s.rif).trim().toUpperCase() === String(rif).trim().toUpperCase());
             if (!sol) return;
@@ -1525,11 +1550,18 @@
             });
             sol.revision_campos = revisionCampos;
             sol.observaciones = document.getElementById('ficha_observacion_general').value.trim() || sol.observaciones || '';
+            
+            // Sincronizar con Supabase
+            await _supabase.from('afiliaciones').update({ 
+                revision_campos: revisionCampos, 
+                observaciones: sol.observaciones 
+            }).eq('rif', rif);
+
             guardarEspejoLocal(baseDatosInterna);
             spawnToast('Revisión Guardada', 'Los campos marcados como erróneos quedaron registrados para devolución.', 'success');
         }
 
-        function subsanarDesdeFicha() {
+        async function subsanarDesdeFicha() {
             const rif = document.getElementById('ficha_header_rif')?.innerText.replace('RIF: ', '').trim();
             const sol = baseDatosInterna.find(s => String(s.rif).trim().toUpperCase() === String(rif).trim().toUpperCase());
             if (!sol) return;
@@ -1553,6 +1585,11 @@
             sol.estatus = '1. Pendiente';
             sol.observaciones = 'Corregido por ejecutivo desde ficha.';
             sol.revision_campos = {};
+
+            // Sincronizar con Supabase
+            const { id, ...solData } = sol; // Excluimos ID si es autoincremental
+            await _supabase.from('afiliaciones').upsert(sol);
+
             guardarEspejoLocal(baseDatosInterna);
             spawnToast('Subsanación Enviada', 'El ejecutivo corrigió los campos marcados y el caso volvió a FIFO.', 'success');
             cerrarFichaCliente();
@@ -1574,13 +1611,20 @@
             renderContentModule();
         }
 
-        function rechazarClienteDesdeFicha() {
+        async function rechazarClienteDesdeFicha() {
             const rif = document.getElementById('ficha_header_rif')?.innerText.replace('RIF: ', '').trim();
             const sol = baseDatosInterna.find(s => String(s.rif).trim().toUpperCase() === String(rif).trim().toUpperCase());
             if (!sol) return;
             sol.estatus = '3. Rechazado (Por Subsanar)';
             sol.fecha_desafiliación = sol.fecha_desafiliación || new Date().toISOString();
             sol.observaciones = document.getElementById('ficha_observacion_general').value.trim() || sol.observaciones || 'Revisión manual del administrador.';
+            
+            await _supabase.from('afiliaciones').update({ 
+                estatus: sol.estatus, 
+                fecha_desafiliación: sol.fecha_desafiliación,
+                observaciones: sol.observaciones
+            }).eq('rif', rif);
+
             guardarEspejoLocal(baseDatosInterna);
             spawnToast('Caso Devuelto', 'El caso ha sido marcado para corrección por el ejecutivo.', 'danger');
             cerrarFichaCliente();
@@ -1588,12 +1632,18 @@
             renderContentModule();
         }
 
-        function moverAFichaBandeja() {
+        async function moverAFichaBandeja() {
             const rif = document.getElementById('ficha_header_rif')?.innerText.replace('RIF: ', '').trim();
             const sol = (baseDatosInterna || []).find(s => String(s.rif).trim().toUpperCase() === String(rif).trim().toUpperCase());
             if (!sol) return;
             sol.estatus = '1. Pendiente';
             sol.observaciones = (sol.observaciones || '') + (sol.observaciones ? ' ' : '') + 'Reingresado a bandeja reciente desde la ficha.';
+            
+            await _supabase.from('afiliaciones').update({ 
+                estatus: sol.estatus, 
+                observaciones: sol.observaciones
+            }).eq('rif', rif);
+
             guardarEspejoLocal(baseDatosInterna);
             cerrarFichaCliente();
             actualizarBadgesSoporte();
@@ -1609,7 +1659,7 @@
             }
         }
 
-        function autenticarUsuario(perfil, nombreCompleto, alcance, execId, execName) {
+        async function autenticarUsuario(perfil, nombreCompleto, alcance, execId, execName) {
             activeProfile = perfil;
             activeExecutiveId = execId;
             activeExecutiveName = execName; // Nombre real casado al ID del ejecutivo
@@ -1641,6 +1691,8 @@
                 headerScope.innerText = perfil === "ADMIN" ? "Admin" : "Ejecutivo";
             }
 
+            inicializarEscuchaTiempoReal();
+
             if (!currentTab) {
                 currentTab = perfil === "ADMIN" ? "dashboard_admin" : "dashboard_negocios";
             }
@@ -1653,10 +1705,13 @@
 
             renderSidebarMenu();
             cargarDatosDesdeServidor();
+            await cargarDatosDesdeServidor();
 
             // Sincronización automática cada 30 segundos para simular "Tiempo Real" nacional
             if (this.autoRefreshInterval) clearInterval(this.autoRefreshInterval);
             this.autoRefreshInterval = setInterval(() => cargarDatosDesdeServidor(), 30000);
+            if (autoRefreshInterval) clearInterval(autoRefreshInterval);
+            autoRefreshInterval = setInterval(() => cargarDatosDesdeServidor(), 30000);
 
             spawnToast("Sesión Sincronizada", `Bienvenido de vuelta, ${nombreCompleto}`);
         }
@@ -2788,7 +2843,7 @@
             }
         }
 
-        function confirmarRechazoTecnico() {
+        async function confirmarRechazoTecnico() {
             const id = document.getElementById("rechazo_id").value;
             const chkCta = document.getElementById("chk_cta").checked;
             const motivoStd = document.getElementById("rechazo_motivo_std").value;
@@ -2797,6 +2852,12 @@
             if (index !== -1) {
                 baseDatosInterna[index].estatus = "3. Rechazado (Por Subsanar)";
                 baseDatosInterna[index].observaciones = chkCta ? `Error en Cuenta Bancaria. ${motivoStd}` : motivoStd;
+                
+                await _supabase.from('afiliaciones').update({ 
+                    estatus: baseDatosInterna[index].estatus, 
+                    observaciones: baseDatosInterna[index].observaciones 
+                }).eq('id', id);
+
                 guardarEspejoLocal(baseDatosInterna);
                 spawnToast("Caso Devuelto", `El caso de ${baseDatosInterna[index].nombre_empresa} ha sido devuelto con observaciones.`, "danger");
 
@@ -3107,12 +3168,14 @@
             try { lucide.createIcons(); } catch (e) { }
         }
 
-        function eliminarRegistro(id) {
+        async function eliminarRegistro(id) {
             const index = baseDatosInterna.findIndex(s => s.id === id);
             if (index !== -1) {
                 const empName = baseDatosInterna[index].nombre_empresa || "Cliente";
                 baseDatosInterna.splice(index, 1);
                 guardarEspejoLocal(baseDatosInterna);
+                await _supabase.from('afiliaciones').delete().eq('id', id);
+
                 spawnToast("Registro Eliminado", `Se ha eliminado con éxito a ${empName}.`, "danger");
                 actualizarBadgesSoporte();
                 if (currentTab === "repositorio") {
@@ -3141,11 +3204,12 @@
             }
         }
 
-        function confirmarEliminarTodo() {
+        async function confirmarEliminarTodo() {
             const passInput = document.getElementById("wipeAdminPassword").value;
             const errEl = document.getElementById("wipePasswordError");
 
             if (passInput === "1234") {
+                await _supabase.from('afiliaciones').delete().neq('id', '0'); // Eliminar todo
                 baseDatosInterna = [];
                 guardarEspejoLocal([]);
                 cerrarWipeModal();
@@ -3877,7 +3941,7 @@
             }
         }
 
-        function negociosEnviarChat() {
+        async function negociosEnviarChat() {
             const clienteRif = document.getElementById("neg_chat_cliente")?.value || localStorage.getItem("activopay_chat_cliente_sel") || "";
             const tipoReporte = document.getElementById("neg_chat_tipo")?.value.trim();
             const asunto = document.getElementById("neg_chat_asunto")?.value.trim();
@@ -3924,8 +3988,10 @@
                 tipo: tipoReporte.toLowerCase().includes('falla') ? 'falla' : 'consulta'
             };
 
-            chatsLocales.push(chatObj);
-            persistChats();
+            // Guardar en Supabase
+            const { error } = await _supabase.from('chats').insert([chatObj]);
+            if (error) console.error(error);
+
             addNotification({
                 titulo: 'Solicitud de afiliación recibida',
                 mensaje: `${cliente.nombre_empresa} · ${motivo}`,
@@ -3948,11 +4014,15 @@
             spawnToast("Canal Abierto", "Su reporte fue enviado al administrador.", "success");
         }
 
-        function procesarAprobacionAdmin(id) {
+        async function procesarAprobacionAdmin(id) {
             const index = baseDatosInterna.findIndex(s => s.id === id);
             if (index !== -1) {
                 baseDatosInterna[index].estatus = "4. Afiliado";
                 baseDatosInterna[index].fecha_afiliado = new Date().toISOString();
+                await _supabase.from('afiliaciones').update({ 
+                    estatus: baseDatosInterna[index].estatus, 
+                    fecha_afiliado: baseDatosInterna[index].fecha_afiliado 
+                }).eq('id', id);
                 guardarEspejoLocal(baseDatosInterna);
                 spawnToast("Caso Aprobado", `El cliente ${baseDatosInterna[index].nombre_empresa} ha sido afiliado de forma exitosa.`, "success");
                 actualizarBadgesSoporte();
@@ -3960,11 +4030,15 @@
             }
         }
 
-        function declararProduccion(id) {
+        async function declararProduccion(id) {
             const index = baseDatosInterna.findIndex(s => s.id === id);
             if (index !== -1) {
                 baseDatosInterna[index].estatus = "5. En Producción";
                 baseDatosInterna[index].fecha_produccion = new Date().toISOString();
+                await _supabase.from('afiliaciones').update({ 
+                    estatus: baseDatosInterna[index].estatus, 
+                    fecha_produccion: baseDatosInterna[index].fecha_produccion 
+                }).eq('id', id);
                 guardarEspejoLocal(baseDatosInterna);
                 spawnToast("Pase a Producción", `La empresa ${baseDatosInterna[index].nombre_empresa} ahora está En Producción.`, "success");
                 actualizarBadgesSoporte();
@@ -3972,11 +4046,11 @@
             }
         }
 
-        function editarCampoRegistroCaliente(id, campo, valor) {
+        async function editarCampoRegistroCaliente(id, campo, valor) {
             const index = baseDatosInterna.findIndex(s => s.id === id);
             if (index !== -1) {
                 baseDatosInterna[index][campo] = valor;
-                guardarEspejoLocal(baseDatosInterna);
+                await _supabase.from('afiliaciones').update({ [campo]: valor }).eq('id', id);
                 actualizarBadgesSoporte();
             }
         }
@@ -4168,7 +4242,7 @@
             try { lucide.createIcons(); } catch (e) { }
         }
 
-        function guardarIngestaManual(event) {
+        async function guardarIngestaManual(event) {
             event.preventDefault();
             const region = document.getElementById("reg_region").value;
             const ejecutivo = document.getElementById("reg_ejecutivo").value;
@@ -4212,7 +4286,9 @@
                 }
             }
 
-            baseDatosInterna.push(payload);
+            // Insertar en Supabase
+            await _supabase.from('afiliaciones').insert([payload]);
+
             detectarYCrearEjecutivosNuevos(baseDatosInterna);
             guardarEspejoLocal(baseDatosInterna);
             spawnToast("Registro Manual Completo", `Se ha registrado a ${nombre_empresa} bajo estatus Pendiente.`);
@@ -4682,7 +4758,7 @@
             renderChatWindows();
         }
 
-        function enviarRespuestaThread(clienteRif, ejecutivoId, motivo) {
+        async function enviarRespuestaThread(clienteRif, ejecutivoId, motivo) {
             const threadId = `${clienteRif}_${ejecutivoId}`;
             const input = document.getElementById(`reply_input_${threadId}`);
             if (!input || !input.value.trim()) return;
@@ -4702,8 +4778,12 @@
                 fecha: new Date().toISOString()
             };
 
-            chatsLocales.push(msgObj);
-            persistChats();
+            // Guardar en Supabase
+            const { error } = await _supabase.from('chats').insert([msgObj]);
+            if (error) {
+                spawnToast("Error de conexión", "No se pudo enviar el mensaje", "danger");
+                return;
+            }
 
             addNotification({
                 titulo: `Nuevo mensaje de ${activeProfile === 'ADMIN' ? 'Integración' : activeExecutiveName}`,
@@ -4771,24 +4851,29 @@
             spawnToast('Hilo archivado', 'El chat quedó en la sección de archivados.', 'success');
         }
 
-        function reabrirHiloDesdeArchivados(id) {
+        async function reabrirHiloDesdeArchivados(id) {
             const chat = (chatsLocales || []).find(c => c.id === id);
             if (!chat) return;
             chatsLocales = (chatsLocales || []).map(c => c.id === id ? { ...c, estado: 'abierto', archivadoPor: null, ocultoParaEjecutivo: false } : c);
             persistChats();
+            await _supabase.from('chats').update({ estado: 'abierto', archivadoPor: null, ocultoParaEjecutivo: false }).eq('id', id);
             addNotification({ titulo: 'Hilo reabierto', mensaje: `${chat.clienteNombre || 'Cliente'} · ${chat.motivo || 'Sin motivo'}`, destino: chat.ejecutivoNombre || 'ADMIN', origen: 'ADMIN', tipo: 'success', chatId: id });
             renderChatsAdminConsola(document.getElementById('mainContainer'));
             spawnToast('Hilo reabierto', 'La conversación volvió a la lista abierta.', 'success');
         }
 
-        function cerrarChatDeHilo(rif, execId) {
+        async function cerrarChatDeHilo(rif, execId) {
             const chat = (chatsLocales || []).find(c => c.clienteRif === rif && c.ejecutivoId === execId);
+            let updateObj = {};
             if (activeProfile === 'NEGOCIOS') {
                 chatsLocales = (chatsLocales || []).map(c => (c.clienteRif === rif && c.ejecutivoId === execId) ? { ...c, estado: 'abierto', ocultoParaEjecutivo: true } : c);
+                updateObj = { ocultoParaEjecutivo: true };
             } else {
                 chatsLocales = (chatsLocales || []).map(c => (c.clienteRif === rif && c.ejecutivoId === execId) ? { ...c, estado: 'cerrado', archivadoPor: 'ADMIN' } : c);
+                updateObj = { estado: 'cerrado', archivadoPor: 'ADMIN' };
             }
             persistChats();
+            if (chat) await _supabase.from('chats').update(updateObj).eq('id', chat.id);
             cerrarVentanaChatUI(`${rif}_${execId}`);
             if (chat) {
                 addNotification({ titulo: activeProfile === 'NEGOCIOS' ? 'Chat oculto para su vista' : 'Hilo archivado', mensaje: `${chat.clienteNombre || 'Cliente'} · ${chat.motivo || 'Sin motivo'}`, destino: activeProfile === 'NEGOCIOS' ? (chat.ejecutivoNombre || 'Ejecutivo') : (chat.ejecutivoNombre || 'ADMIN'), origen: 'ADMIN', tipo: activeProfile === 'NEGOCIOS' ? 'info' : 'info', chatId: chat.id });
@@ -4798,10 +4883,11 @@
             spawnToast('Hilo archivado', 'La conversación se movió al historial cerrado.', 'success');
         }
 
-        function eliminarChatDefinitivo(id) {
+        async function eliminarChatDefinitivo(id) {
             const chat = (chatsLocales || []).find(c => c.id === id);
             chatsLocales = (chatsLocales || []).filter(item => item.id !== id);
             persistChats();
+            await _supabase.from('chats').delete().eq('id', id);
             if (chat) {
                 chatWindows = (chatWindows || []).filter(x => String(x).split('_')[0] !== String(chat.clienteRif || ''));
             }
@@ -4873,7 +4959,7 @@
 
             const loginForm = document.getElementById("loginForm");
             if (loginForm) {
-                loginForm.addEventListener("submit", function (e) {
+                loginForm.addEventListener("submit", async function (e) {
                     e.preventDefault();
                     const userVal = document.getElementById("loginUser").value.trim().toLowerCase();
                     const passVal = document.getElementById("loginPassword").value;
@@ -4883,10 +4969,12 @@
 
                     if (userVal === "aalvarado" && passVal === "1234") {
                         autenticarUsuario("ADMIN", "Aiker Alvarado", "Integración de Aplicaciones", "ADMIN", "Aiker Alvarado");
+                        await autenticarUsuario("ADMIN", "Aiker Alvarado", "Integración de Aplicaciones", "ADMIN", "Aiker Alvarado");
                     } else {
                         const exec = directorioEjecutivos.find(e => e.usuario === userVal && e.clave === passVal);
                         if (exec) {
                             autenticarUsuario("NEGOCIOS", exec.nombre_ejecutivo, "Cartera Comercial", exec.id_interno, exec.nombre_ejecutivo);
+                            await autenticarUsuario("NEGOCIOS", exec.nombre_ejecutivo, "Cartera Comercial", exec.id_interno, exec.nombre_ejecutivo);
                         } else {
                             if (errEl) errEl.classList.remove("hidden");
                         }
