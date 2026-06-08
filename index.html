@@ -842,15 +842,16 @@
 
     <script>
         // CONFIGURACIÓN DE SUPABASE
-        const SUPABASE_URL = (window.SUPABASE_CONFIG?.url || "https://dzxyowmwluxxjregkpys.supabase.co").replace(/\/+$/, "");
-        const SUPABASE_KEY = window.SUPABASE_CONFIG?.anonKey || "";
-        const hasPlaceholderKey = /TU_|COPIA_AQUI|REEMPLAZA|sb_secret_/.test(SUPABASE_KEY);
+        const DEFAULT_SUPABASE_URL = "https://ezetzqrdlutddfwldyvd.supabase.co";
+        const SUPABASE_URL = String(window.SUPABASE_CONFIG?.url || DEFAULT_SUPABASE_URL).trim().replace(/\/+$/, "");
+        const SUPABASE_KEY = String(window.SUPABASE_CONFIG?.anonKey || "").trim();
+        const hasPlaceholderKey = /^(TU_|COPIA_AQUI|REEMPLAZA|YOUR_|sb_secret_)/i.test(SUPABASE_KEY);
         const _supabase = SUPABASE_URL && SUPABASE_KEY && !hasPlaceholderKey
             ? supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
             : null;
 
         if (!_supabase) {
-            console.warn("Supabase no está listo. Pega la anon public key real en ./supabase-config.js y usa la URL del proyecto.");
+            console.warn("Supabase no está listo. Asegúrate de usar la anon public key real en ./supabase-config.js.");
         }
 
         const BACKEND_URL = window.SUPABASE_CONFIG?.url || "https://dzxyowmwluxxjregkpys.supabase.co";
@@ -1656,6 +1657,17 @@
             if (modal) {
                 modal.classList.add("hidden");
                 modal.classList.remove("flex");
+            }
+        }
+
+        function inicializarEscuchaTiempoReal() {
+            try {
+                if (!_supabase) {
+                    console.warn("Tiempo real desactivado: Supabase no está configurado.");
+                    return;
+                }
+            } catch (e) {
+                console.warn("No se pudo inicializar el tiempo real:", e);
             }
         }
 
@@ -4968,12 +4980,10 @@
                     if (errEl) errEl.classList.add("hidden");
 
                     if (userVal === "aalvarado" && passVal === "1234") {
-                        autenticarUsuario("ADMIN", "Aiker Alvarado", "Integración de Aplicaciones", "ADMIN", "Aiker Alvarado");
                         await autenticarUsuario("ADMIN", "Aiker Alvarado", "Integración de Aplicaciones", "ADMIN", "Aiker Alvarado");
                     } else {
                         const exec = directorioEjecutivos.find(e => e.usuario === userVal && e.clave === passVal);
                         if (exec) {
-                            autenticarUsuario("NEGOCIOS", exec.nombre_ejecutivo, "Cartera Comercial", exec.id_interno, exec.nombre_ejecutivo);
                             await autenticarUsuario("NEGOCIOS", exec.nombre_ejecutivo, "Cartera Comercial", exec.id_interno, exec.nombre_ejecutivo);
                         } else {
                             if (errEl) errEl.classList.remove("hidden");
